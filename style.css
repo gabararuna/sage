@@ -29,8 +29,8 @@ html.menu-open, body.menu-open {
     --text-gradient: linear-gradient(90deg, #c4b5fd, #3b82f6, #2dd4bf);
     --accent-glow: rgba(59, 130, 246, 0.4);
     --border-color: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(10, 10, 12, 0.85);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(20, 20, 23, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
 
     /* Spacing & Sizing */
     --container-width: 1400px;
@@ -59,20 +59,17 @@ a {
     color: inherit;
 }
 
-/* Header */
-header {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    padding: 0 4%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+/* Header Styling */
+.glass {
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    z-index: 3000; /* Higher than sidebar drawer */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    z-index: 3000;
 }
 
 .logo {
@@ -543,15 +540,9 @@ header {
     display: block;
 }
 
-/* Glassmorphism 2.0 Refinements */
-header {
+/* Header Refinements */
+header.glass {
     height: 70px;
-    /* Slimmer header */
-    background: rgba(10, 10, 12, 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Animations */
