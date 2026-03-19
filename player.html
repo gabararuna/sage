@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage | Desenvolvimento Profissional</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo"><a href="index.html">Sage</a></div>
+        <button class="mobile-menu-toggle" id="menu-toggle">
+            <span>☰</span>
+        </button>
+    </header>
+
+    <main class="player-layout">
+        <section class="player-main">
+            <div class="player-container">
+                <nav class="player-breadcrumbs">
+                    <a href="index.html">Sage</a> &gt; <span id="course-title-crumb">...</span>
+                </nav>
+
+                <div id="video-wrapper">
+                    <div id="player"></div>
+                    <div class="player-overlay" id="overlay"></div>
+
+                    <!-- Custom Video Cover -->
+                    <div id="video-cover" class="video-cover">
+                        <div class="play-button-large">
+                            <svg viewBox="0 0 24 24" width="48" height="48" fill="white">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Custom Error Overlay -->
+                    <div id="video-error" class="video-error-overlay">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="var(--accent-primary)"
+                            style="margin-bottom: 20px;">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                        </svg>
+                        <h2 style="margin-bottom: 10px;">Ops! Vídeo Indisponível</h2>
+                        <p style="color: var(--text-secondary); max-width: 300px;">Este conteúdo não está disponível no
+                            momento. Nossa equipe técnica já foi notificada.</p>
+                    </div>
+
+                    <!-- Custom Controls -->
+                    <div class="video-controls" id="controls">
+                        <button class="control-btn" id="skip-back" title="Voltar 10s">
+                            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="12" y="15" font-size="8" text-anchor="middle" fill="currentColor" font-weight="bold">10</text></svg>
+                        </button>
+
+                        <button class="control-btn" id="play-pause" title="Play/Pause">
+                            <svg viewBox="0 0 24 24" id="play-icon">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                            </svg>
+                        </button>
+
+                        <button class="control-btn" id="skip-forward" title="Avançar 10s">
+                            <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="12" y="15" font-size="8" text-anchor="middle" fill="currentColor" font-weight="bold">10</text></svg>
+                        </button>
+
+                        <button class="control-btn" id="toggle-captions" title="Legendas (CC)">
+                            <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5V10.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5V10.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
+                        </button>
+
+                        <div class="progress-bar-container" id="progress-container">
+                            <div class="progress-bar-active" id="progress-bar"></div>
+                        </div>
+
+                        <button class="control-btn" id="mute-unmute" title="Mute/Unmute">
+                            <svg viewBox="0 0 24 24" id="volume-up">
+                                <path
+                                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                            </svg>
+                            <svg viewBox="0 0 24 24" id="volume-off" style="display:none;">
+                                <path
+                                    d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                            </svg>
+                        </button>
+
+                        <button class="control-btn" id="fullscreen" title="Fullscreen">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="video-details" style="margin-top: 1.5rem;">
+                    <h1 id="playing-title">Título do Episódio</h1>
+                    <p id="playing-desc" style="color: var(--text-secondary); margin-top: 0.5rem;">Descrição do episódio
+                        aqui...</p>
+                    <button id="mark-complete" class="primary-btn"
+                        style="margin-top: 1.5rem; padding: 12px 24px; background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        Marcar como concluído
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="player-sidebar" id="sidebar">
+            <div class="sidebar-loading">Carregando lista...</div>
+        </aside>
+    </main>
+
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+    <!-- YouTube iFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
