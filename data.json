@@ -24,9 +24,720 @@
   },
   "categories": [
     {
-      "id": "desenvolvimento-bi",
-      "name": "Análise de Dados, ETL e Desenvolvimento em BI",
-      "courses": []
+      "id": "parceiros",
+      "name": "Aproveite para ver esses cursos antes dos nossos lançamento",
+      "courses": [
+        {
+          "id": "power-bi-karine-lago",
+          "title": "Introdução ao Power BI por Karine Lago",
+          "description": "Aprenda Power BI do zero com Karine Lago neste minicurso completo, cobrindo desde a instalação até a criação de dashboards profissionais.",
+          "banner": "https://xperiun.com/wp-content/uploads/2023/09/DADOS_DA_EMPRESA-1-1120x631.png",
+          "modules": [
+            {
+              "id": "m1",
+              "title": "Conteúdo do Curso",
+              "episodes": [
+                {
+                  "id": "ep1",
+                  "title": "[Aula 1] Dê os Primeiros Passos: Aprendendo Power BI do ZERO",
+                  "description": "Introdução ao Power BI e primeiros passos.",
+                  "youtubeId": "54YeyCWq1wU",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/54YeyCWq1wU/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep2",
+                  "title": "[Aula 2] Como baixar o Power de forma GRATUITA (atualizado 2024)",
+                  "description": "Instalação e configuração inicial.",
+                  "youtubeId": "ROYlOYO1GDI",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ROYlOYO1GDI/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep3",
+                  "title": "[Aula 3] Tratando dados no Power Query",
+                  "description": "Limpeza e transformação de dados.",
+                  "youtubeId": "TaeH3Wns9yY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/TaeH3Wns9yY/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep4",
+                  "title": "[Aula 4] Criando Relacionamentos Entre Tabelas",
+                  "description": "Modelagem de dados e relacionamentos.",
+                  "youtubeId": "2cMsNn2D70E",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/2cMsNn2D70E/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep5",
+                  "title": "[Aula 5] Criando Cálculos Simples e Poderosos na Linguagem DAX",
+                  "description": "Introdução às medidas e fórmulas DAX.",
+                  "youtubeId": "UXcwws33roY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/UXcwws33roY/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep6",
+                  "title": "[Aula 6] Criando Gráficos de Impacto e Visualizando Dados",
+                  "description": "Visualização de dados e criação de gráficos.",
+                  "youtubeId": "l_MGOexGe9A",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/l_MGOexGe9A/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep7",
+                  "title": "[Aula 7] Como criar um Dashboard com um Design Profissional",
+                  "description": "Design e layout de dashboards.",
+                  "youtubeId": "_XO8jN1yC6I",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/_XO8jN1yC6I/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep8",
+                  "title": "[Aula 8] Compartilhando e Publicando Seus Relatórios",
+                  "description": "Publicação e compartilhamento de relatórios.",
+                  "youtubeId": "kdrGYW8Dp2I",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/kdrGYW8Dp2I/maxresdefault.jpg"
+                },
+                {
+                  "id": "ep9",
+                  "title": "[Aula 9] Como aprender mais sobre Power BI",
+                  "description": "Próximos passos e recursos adicionais.",
+                  "youtubeId": "uAO-Prx-9rg",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/uAO-Prx-9rg/maxresdefault.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "curso-de-figma",
+          "title": "Introdução ao Figma com a Hashtag",
+          "description": "Aprenda Figma do básico ao avançado com este curso completo da Hashtag Treinamentos.",
+          "banner": "https://wpdean.com/wp-content/uploads/2024/12/what-is-figma-used-for.jpg",
+          "modules": [
+            {
+              "id": "m1",
+              "title": "Conteúdo do Curso",
+              "episodes": [
+                {
+                  "id": "figma-ep1",
+                  "title": "Curso de Figma: O melhor Curso de Figma Grátis do Youtube",
+                  "description": "",
+                  "youtubeId": "-wMGaO283Cw",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/-wMGaO283Cw/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep2",
+                  "title": "Como Usar o Figma: Como Usar as Melhores Técnicas para Iniciantes!",
+                  "description": "",
+                  "youtubeId": "UYPtatFRaXM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/UYPtatFRaXM/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep3",
+                  "title": "Barra de Ferramentas do Figma: Aprenda de uma vez por todas!",
+                  "description": "",
+                  "youtubeId": "Qwpu1qu2UjY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Qwpu1qu2UjY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep4",
+                  "title": "Auto Layout Figma - Tudo o que você precisa saber!",
+                  "description": "",
+                  "youtubeId": "nN9Sxuw-aKk",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/nN9Sxuw-aKk/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep5",
+                  "title": "Figma Protótipo Navegável e Interativo - 10x MAIS RÁPIDO!",
+                  "description": "",
+                  "youtubeId": "MKDpqjxe1Rw",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/MKDpqjxe1Rw/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep6",
+                  "title": "Responsividade no Figma: Auto Layout para Design Responsivo!",
+                  "description": "",
+                  "youtubeId": "Y5qkGJbqU7U",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Y5qkGJbqU7U/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep7",
+                  "title": "Figma Espaçamento com Variáveis e Régua - 10x MAIS CONSISTENTE!",
+                  "description": "",
+                  "youtubeId": "oysQXdruS3A",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/oysQXdruS3A/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep8",
+                  "title": "Grid no Figma: Layouts WEB e MOBILE! (Colunas e Grids)",
+                  "description": "",
+                  "youtubeId": "TUZBkOzjjlU",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/TUZBkOzjjlU/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep9",
+                  "title": "Como Editar Texto no Figma - Use Estilos, Fontes e Plugins na Edição de Textos",
+                  "description": "",
+                  "youtubeId": "Q-3xVA9GFD4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Q-3xVA9GFD4/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep10",
+                  "title": "Como Agrupar no Figma - Ganhe Tempo Agrupando do Jeito Certo!",
+                  "description": "",
+                  "youtubeId": "iuJhFHBbo7Y",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/iuJhFHBbo7Y/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep11",
+                  "title": "Alinhamento no Figma - 3 Dicas Essenciais e Desafio Prático!",
+                  "description": "",
+                  "youtubeId": "ndrw8GRkBSQ",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ndrw8GRkBSQ/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep12",
+                  "title": "Variáveis no Figma: Cores, Números e Tipografia como Você Nunca Viu!",
+                  "description": "",
+                  "youtubeId": "Pg81S2BN0mY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Pg81S2BN0mY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep13",
+                  "title": "Paleta de Cores no Figma - REGRA 60-30-10 e Inspiração de Paletas",
+                  "description": "",
+                  "youtubeId": "NPq8sOaqsrY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/NPq8sOaqsrY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep14",
+                  "title": "Dark Mode no Figma do JEITO CERTO! Tutorial em apenas 20 minutos!",
+                  "description": "",
+                  "youtubeId": "JBonJC7qQ7k",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/JBonJC7qQ7k/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep15",
+                  "title": "Como Criar uma Landing Page no Figma em 25 minutos!",
+                  "description": "",
+                  "youtubeId": "fkr1X8hCSwc",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/fkr1X8hCSwc/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep16",
+                  "title": "Como Fazer Degradê no Figma: Transparente e Gradiente Background!",
+                  "description": "",
+                  "youtubeId": "2buhNhPY2wY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/2buhNhPY2wY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep17",
+                  "title": "Componentes no Figma: Domine as Propriedades e Variantes!",
+                  "description": "",
+                  "youtubeId": "4UlkCfXf-_U",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/4UlkCfXf-_U/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep18",
+                  "title": "Como Criar BOTÃO COM HOVER no FIGMA",
+                  "description": "",
+                  "youtubeId": "1evqtRq658Y",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/1evqtRq658Y/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep19",
+                  "title": "Figma Tutorial: Cards com Auto Layout - Rápido e fácil de fazer!",
+                  "description": "",
+                  "youtubeId": "ObrHbReM1cc",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ObrHbReM1cc/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep20",
+                  "title": "Criar Formulário no Figma: Tutorial Completo para Componente Interativo",
+                  "description": "",
+                  "youtubeId": "HNMisT2lOK4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/HNMisT2lOK4/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep21",
+                  "title": "Inserindo Ícones no Figma Como Profissional: 5 Formas Simples!",
+                  "description": "",
+                  "youtubeId": "ZjyIt2CJmLM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ZjyIt2CJmLM/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep22",
+                  "title": "Como Desfazer Componentes no Figma: Evite esses erros básicos!",
+                  "description": "",
+                  "youtubeId": "AF51EOyV7-4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/AF51EOyV7-4/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep23",
+                  "title": "Imagem no Figma: 3 Dicas Essenciais para Inserir, tratar e recortar",
+                  "description": "",
+                  "youtubeId": "lXm-tUfQZrg",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/lXm-tUfQZrg/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep24",
+                  "title": "Carrossel Interativo no Figma - Imagens Fluidas e Componentes",
+                  "description": "",
+                  "youtubeId": "sxHPROjtrpc",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/sxHPROjtrpc/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep25",
+                  "title": "Vetores no Figma: Melhore Seus Projetos com Essas Técnicas!",
+                  "description": "",
+                  "youtubeId": "_fI-ri6V3IU",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/_fI-ri6V3IU/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep26",
+                  "title": "Como Usar a Caneta no Figma - DOMINE a Pen Tool em Minutos!",
+                  "description": "",
+                  "youtubeId": "Z1gwNmZUCBM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Z1gwNmZUCBM/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep27",
+                  "title": "Logo Vetorizada no Figma - DO ZERO ao Vetor Exportado em SVG",
+                  "description": "",
+                  "youtubeId": "3G6V7_MUSWA",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/3G6V7_MUSWA/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep28",
+                  "title": "WIREFRAME - O que é e COMO FAZER no FIGMA!",
+                  "description": "",
+                  "youtubeId": "O7jXn04UTGA",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/O7jXn04UTGA/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep29",
+                  "title": "Como INSTALAR FONTE no Figma Web - Ferramenta OFICIAL",
+                  "description": "",
+                  "youtubeId": "gh-z37UioY0",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/gh-z37UioY0/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep30",
+                  "title": "Figma BREAKPOINTS - Plugin GRÁTIS com Breakpoints Responsivos!",
+                  "description": "",
+                  "youtubeId": "INsXzA_uvGQ",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/INsXzA_uvGQ/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep31",
+                  "title": "CURVAR TEXTO no Figma - Faça um Texto CURVADO com Plugin GRÁTIS!",
+                  "description": "",
+                  "youtubeId": "qWgyaRFqxH0",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/qWgyaRFqxH0/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep32",
+                  "title": "Auto Layout Figma - DOMINE o Auto Layout de uma vez por todas! [2024]",
+                  "description": "",
+                  "youtubeId": "UKTE-04LxVc",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/UKTE-04LxVc/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep33",
+                  "title": "PLUGINS DO FIGMA para Texto - Os 5 Melhores!",
+                  "description": "",
+                  "youtubeId": "ebDQHYEMCSU",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ebDQHYEMCSU/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep34",
+                  "title": "Glifos no Figma: Truque Profissional para Melhorar Suas Fontes",
+                  "description": "",
+                  "youtubeId": "Tw6FW-d50iA",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Tw6FW-d50iA/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep35",
+                  "title": "Atalhos do Figma para Texto",
+                  "description": "",
+                  "youtubeId": "uZVUawMBNag",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/uZVUawMBNag/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep36",
+                  "title": "Como CLONAR SITE com Figma: AI ou Plugin?",
+                  "description": "",
+                  "youtubeId": "DuG7KVmfTjY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/DuG7KVmfTjY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep37",
+                  "title": "CORRETOR ORTOGRÁFICO no Figma em PORTUGUÊS",
+                  "description": "",
+                  "youtubeId": "YYiG5f6TE9g",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/YYiG5f6TE9g/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep38",
+                  "title": "Como Usar o FIGMA BETA e suas NOVAS funcionalidades",
+                  "description": "",
+                  "youtubeId": "JVdgj8RgDDM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/JVdgj8RgDDM/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep39",
+                  "title": "Design Responsivo no Figma - DOMINE o Auto-Layout e Constraints",
+                  "description": "",
+                  "youtubeId": "YdRB4zTAzmo",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/YdRB4zTAzmo/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep40",
+                  "title": "NOVO AUTO LAYOUT do Figma 2024 - Suggest Auto Layout",
+                  "description": "",
+                  "youtubeId": "bG6t31TgLk8",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/bG6t31TgLk8/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep41",
+                  "title": "Figma em MENOS DE 25 MINUTOS! 😱 Tutorial passo a passo para iniciantes.",
+                  "description": "",
+                  "youtubeId": "KX9hakZl7vw",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/KX9hakZl7vw/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep42",
+                  "title": "Figma Tutorial: Menu Animado com Design de Botão em Apenas 15 minutos!",
+                  "description": "",
+                  "youtubeId": "Z6F9wsKTyUA",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/Z6F9wsKTyUA/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep43",
+                  "title": "Figma é Alternativo ao Canva? 5 Comparações das Ferramentas!",
+                  "description": "",
+                  "youtubeId": "E-C6hRlQhB8",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/E-C6hRlQhB8/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep44",
+                  "title": "Responsividade no Figma para Landing Page - Versão Mobile!",
+                  "description": "",
+                  "youtubeId": "k-rxazjG4jY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/k-rxazjG4jY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep45",
+                  "title": "Figma Update: \"Aspect Ratio, locked\" em 3 Passos Super Simples!",
+                  "description": "",
+                  "youtubeId": "i58c5Luee0E",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/i58c5Luee0E/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep46",
+                  "title": "Figma Travando? 💥 Resolva com essas 5 dicas oficiais do Figma!",
+                  "description": "",
+                  "youtubeId": "LD_rlbDcFK4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/LD_rlbDcFK4/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep47",
+                  "title": "Bomba! 💣 Figma Website pode acabar com Framer e Webflow?!",
+                  "description": "",
+                  "youtubeId": "J7rQBi7taTA",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/J7rQBi7taTA/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep48",
+                  "title": "Como Fazer Handoff no Figma - 10 X MAIS RÁPIDO!",
+                  "description": "",
+                  "youtubeId": "xQPWHClMYWY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/xQPWHClMYWY/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep49",
+                  "title": "FIGMA DROPDOWN MENU - Figma Variables vs Manual, o que é melhor?",
+                  "description": "",
+                  "youtubeId": "NnfEDxXWkN0",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/NnfEDxXWkN0/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep50",
+                  "title": "Como CURVAR TEXTO no FIGMA sem PLUGIN e em 1 minuto",
+                  "description": "",
+                  "youtubeId": "V7DSlGPdaTM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/V7DSlGPdaTM/maxresdefault.jpg"
+                },
+                {
+                  "id": "figma-ep51",
+                  "title": "Figma Schema 2025 - Slots, Check Design e Vibe Coding",
+                  "description": "",
+                  "youtubeId": "GrRZRrFzc68",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/GrRZRrFzc68/maxresdefault.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "curso-basico-sql",
+          "title": "Introdução ao código em SQL",
+          "description": "Fundamentos de SQL, instalação do MySQL e consultas básicas.",
+          "banner": "https://blog.ebaconline.com.br/blog/wp-content/uploads/2023/04/image3-5-e1681758172172.jpg",
+          "modules": [
+            {
+              "id": "m1",
+              "title": "Aulas do Curso",
+              "episodes": [
+                {
+                  "id": "sql-ep1",
+                  "title": "Fundamentos do SQL - Aula 1",
+                  "description": "",
+                  "youtubeId": "ncgEQBONI_w",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/ncgEQBONI_w/maxresdefault.jpg"
+                },
+                {
+                  "id": "sql-ep2",
+                  "title": "Instalação do MySQL e Primeiras Consultas - Aula 2",
+                  "description": "",
+                  "youtubeId": "UJ3ljw5uuEM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/UJ3ljw5uuEM/maxresdefault.jpg"
+                },
+                {
+                  "id": "sql-ep3",
+                  "title": "Filtros no SQL com WHERE - Aula 3",
+                  "description": "",
+                  "youtubeId": "7R-yyZQAzsc",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/7R-yyZQAzsc/maxresdefault.jpg"
+                },
+                {
+                  "id": "sql-ep4",
+                  "title": "Funções de Agregação (SUM, COUNT, ...) - Aula 4",
+                  "description": "",
+                  "youtubeId": "BBASKdGg2Wo",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/BBASKdGg2Wo/maxresdefault.jpg"
+                },
+                {
+                  "id": "sql-ep5",
+                  "title": "Agrupamentos com GROUP BY - Aula 5",
+                  "description": "",
+                  "youtubeId": "CMDHxPW-6ow",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/CMDHxPW-6ow/maxresdefault.jpg"
+                },
+                {
+                  "id": "sql-ep6",
+                  "title": "INNER JOIN - Aula 6",
+                  "description": "",
+                  "youtubeId": "7yYUFYiue_4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/7yYUFYiue_4/maxresdefault.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "curso-power-automate",
+          "title": "Introdução ao Power Automate",
+          "description": "Automatize tarefas com Power Automate, do zero ao avançado.",
+          "banner": "https://www.m3datarecovery.com/images/en-wiki/microsoft-power-automate.jpg",
+          "modules": [
+            {
+              "id": "m1",
+              "title": "Aulas do Curso",
+              "episodes": [
+                {
+                  "id": "pa-ep1",
+                  "title": "O que é o Power Automate",
+                  "description": "",
+                  "youtubeId": "rw2lA6JUlqY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/rw2lA6JUlqY/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep2",
+                  "title": "Como sair do zero no Power Automate em Apenas uma Aula",
+                  "description": "",
+                  "youtubeId": "fTfqnUvIBXY",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/fTfqnUvIBXY/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep3",
+                  "title": "[Aula 1] Conhecendo o Ambiente",
+                  "description": "",
+                  "youtubeId": "DcBsRczFpRw",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/DcBsRczFpRw/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep4",
+                  "title": "[Aula 2] Criando um Fluxo de Recorrência",
+                  "description": "",
+                  "youtubeId": "7QbCJjTBXjw",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/7QbCJjTBXjw/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep5",
+                  "title": "[Aula 3] Estruturas de Repetição e Condicionais",
+                  "description": "",
+                  "youtubeId": "lcqvc9dgHY4",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/lcqvc9dgHY4/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep6",
+                  "title": "[Aula 4] Filtrando Dados",
+                  "description": "",
+                  "youtubeId": "39_9IWG4BiQ",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/39_9IWG4BiQ/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep7",
+                  "title": "[Aula 5] Funções no Power Automate",
+                  "description": "",
+                  "youtubeId": "wJfvaw1jV4g",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/wJfvaw1jV4g/maxresdefault.jpg"
+                },
+                {
+                  "id": "pa-ep8",
+                  "title": "[Aula 6] Projeto Análise de Despesas",
+                  "description": "",
+                  "youtubeId": "clSFX0oeDDQ",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/clSFX0oeDDQ/maxresdefault.jpg"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "curso-analise-dados",
+          "title": "Fundamentos da Análise de Dados",
+          "description": "Fundamentos de análise de dados, Excel, Power BI e Storytelling.",
+          "banner": "https://estatmg.com.br/wp-content/uploads/2022/08/tipos-de-analises-de-dados-como-funciona-processo-de.jpg.webp",
+          "modules": [
+            {
+              "id": "m1",
+              "title": "Aulas do Curso",
+              "episodes": [
+                {
+                  "id": "ad-ep1",
+                  "title": "Aula 1 - O que é Análise de Dados?",
+                  "description": "",
+                  "youtubeId": "sxfYjczPOe8",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/sxfYjczPOe8/maxresdefault.jpg"
+                },
+                {
+                  "id": "ad-ep2",
+                  "title": "Aula 2 - Fontes e Qualidade dos Dados",
+                  "description": "",
+                  "youtubeId": "1Or7hCNQu9c",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/1Or7hCNQu9c/maxresdefault.jpg"
+                },
+                {
+                  "id": "ad-ep3",
+                  "title": "Aula 3 - Introdução à Análise de Dados no Excel",
+                  "description": "",
+                  "youtubeId": "uFlbuj2ZI6Q",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/uFlbuj2ZI6Q/maxresdefault.jpg"
+                },
+                {
+                  "id": "ad-ep4",
+                  "title": "Aula 4 - Introdução à Visualização de Dados no Power BI",
+                  "description": "",
+                  "youtubeId": "T9iiwk1nahM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/T9iiwk1nahM/maxresdefault.jpg"
+                },
+                {
+                  "id": "ad-ep5",
+                  "title": "Aula 5 - Valor da Informação",
+                  "description": "",
+                  "youtubeId": "MO_HEZ0dFfk",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/MO_HEZ0dFfk/maxresdefault.jpg"
+                },
+                {
+                  "id": "ad-ep6",
+                  "title": "Aula 6 - 10 Dicas para um Storytelling Impressionador",
+                  "description": "",
+                  "youtubeId": "dc-HyTPyjNM",
+                  "duration": "0:00",
+                  "banner": "https://img.youtube.com/vi/dc-HyTPyjNM/maxresdefault.jpg"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
