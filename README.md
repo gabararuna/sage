@@ -2,8 +2,6 @@
 
 Uma plataforma de gerenciamento de cursos (LMS) focada em UX minimalista, alta performance e experiência mobile impecável.
 
-![Screenshot da Home](https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1200&auto=format&fit=crop)
-
 ## ✨ Principais Funcionalidades
 
 ### 🎞️ Player de Vídeo Avançado
