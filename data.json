@@ -1,0 +1,32 @@
+{
+  "__COMENTARIO_INSTRUCOES__": "Siga este modelo para adicionar novos cursos. Copie o conteúdo de '__MODELO_DE_CURSO__' para dentro da lista 'courses' de uma categoria.",
+  "__MODELO_DE_CURSO__": {
+    "id": "id-do-curso",
+    "title": "Título do Curso",
+    "description": "Descrição curta do curso.",
+    "banner": "URL-DA-IMAGEM-DE-CAPA",
+    "modules": [
+      {
+        "id": "m1",
+        "title": "Módulo 1: Nome do Módulo",
+        "episodes": [
+          {
+            "id": "ep1",
+            "title": "Aula 1: Introdução",
+            "description": "O que será visto nesta aula.",
+            "youtubeId": "ID-DO-VIDEO-YOUTUBE",
+            "duration": "10:00",
+            "banner": "URL-DA-IMAGEM-DA-AULA"
+          }
+        ]
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "desenvolvimento-bi",
+      "name": "Análise de Dados, ETL e Desenvolvimento em BI",
+      "courses": []
+    }
+  ]
+}

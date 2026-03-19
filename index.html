@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage | Desenvolvimento Profissional</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Sage</div>
+    </header>
+
+    <main>
+        <section class="hero animate-in">
+            <h1>Sua jornada para o domínio técnico começa aqui.</h1>
+            <p>Acesse conteúdos exclusivos e trilhas de aprendizado desenhadas por especialistas.</p>
+        </section>
+
+        <div id="catalog-root" class="animate-in" style="animation-delay: 0.2s;">
+            <!-- Dynamic content loaded from data.json will be inserted here -->
+            <div class="loading" style="padding: 10% 4%; text-align: center; color: var(--text-secondary);">
+                <div class="skeleton" style="width: 200px; height: 30px; margin: 0 auto 2rem;"></div>
+                <p>Carregando catálogo de cursos...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        console.log("SAGE: Script inline carregado");
+        window.onerror = function (msg, url, line) {
+            const root = document.getElementById('catalog-root');
+            if (root) root.innerHTML = `<div style="color: #ef4444; padding: 20px; border: 1px solid #ef4444; border-radius: 8px; background: rgba(239, 68, 68, 0.1);">
+                <strong>Erro de Execução:</strong><br>${msg}<br><small>Arquivo: ${url}:${line}</small>
+            </div>`;
+        };
+    </script>
+    <script src="app.js" onerror="console.error('Falha ao carregar app.js')"></script>
+</body>
+
+</html>
