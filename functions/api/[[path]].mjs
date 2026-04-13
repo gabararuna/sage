@@ -242,10 +242,8 @@ export async function onRequest(context) {
             const user = await authenticate(request, env);
             if (!user) return json({ error: 'Token não fornecido' }, 401);
 
-            const epId = parseInt(playMatch[1], 10);
-            if (isNaN(epId)) return json({ error: 'ID inválido' }, 400);
-
-            const rows = await sql`SELECT video_url FROM public.episodes WHERE id = ${epId}`;
+            const epId = playMatch[1]; // UUID ou inteiro — passa como string
+            const rows = await sql`SELECT video_url FROM public.episodes WHERE id::text = ${epId}`;
             if (!rows.length) return json({ error: 'Conteúdo não encontrado' }, 404);
 
             const ref = rows[0].video_url;
@@ -386,10 +384,10 @@ export async function onRequest(context) {
             }
 
             const sentEpisodes = (episodes || []).filter(ep => ep.title?.trim());
-            const sentIds = sentEpisodes.filter(ep => ep.id).map(ep => Number(ep.id));
+            const sentIds = sentEpisodes.filter(ep => ep.id).map(ep => String(ep.id));
 
             if (sentIds.length > 0) {
-                await sql`DELETE FROM public.episodes WHERE module_id = ${moduleId} AND id != ALL(${sentIds}::int[])`;
+                await sql`DELETE FROM public.episodes WHERE module_id = ${moduleId} AND id::text != ALL(${sentIds})`;
             } else {
                 await sql`DELETE FROM public.episodes WHERE module_id = ${moduleId}`;
             }
@@ -398,9 +396,9 @@ export async function onRequest(context) {
                 const ep = sentEpisodes[i];
                 if (ep.id) {
                     if (ep.url?.trim()) {
-                        await sql`UPDATE public.episodes SET title = ${ep.title.trim()}, "order" = ${i + 1}, video_url = ${extractVideoRef(ep.url.trim())} WHERE id = ${Number(ep.id)}`;
+                        await sql`UPDATE public.episodes SET title = ${ep.title.trim()}, "order" = ${i + 1}, video_url = ${extractVideoRef(ep.url.trim())} WHERE id::text = ${String(ep.id)}`;
                     } else {
-                        await sql`UPDATE public.episodes SET title = ${ep.title.trim()}, "order" = ${i + 1} WHERE id = ${Number(ep.id)}`;
+                        await sql`UPDATE public.episodes SET title = ${ep.title.trim()}, "order" = ${i + 1} WHERE id::text = ${String(ep.id)}`;
                     }
                 } else {
                     if (!ep.url?.trim()) continue;
