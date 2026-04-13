@@ -5,11 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sage | Player</title>
+    <!-- Auth Guard: executado antes de qualquer renderização -->
+    <script>
+        (function () {
+            try {
+                var raw = localStorage.getItem('sage_auth');
+                if (!raw || raw === 'undefined' || raw === 'null') throw new Error('no-auth');
+                var auth = JSON.parse(raw);
+                if (!auth || !auth.token) throw new Error('no-token');
+            } catch (_) {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <style>body { visibility: hidden; }</style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>document.addEventListener('DOMContentLoaded', function(){ document.body.style.visibility = 'visible'; });</script>
 </head>
 
 <!-- player-page: ativa layout fixo (overflow:hidden) via CSS -->

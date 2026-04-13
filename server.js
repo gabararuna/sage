@@ -237,6 +237,153 @@ app.post('/api/admin/course', authenticateToken, requireAdmin, async (req, res) 
     }
 });
 
+// 5b. Admin: Detalhes completos do curso para edição (inclui video_url)
+app.get('/api/admin/course-edit/:slug', authenticateToken, requireAdmin, async (req, res) => {
+    const { slug } = req.params;
+    try {
+        const courseRes = await pool.query(
+            `SELECT c.id, c.title, c.slug, cat.name as category_name
+             FROM public.courses c
+             JOIN public.categories cat ON cat.id = c.category_id
+             WHERE c.slug = $1`,
+            [slug]
+        );
+        if (courseRes.rows.length === 0) return res.status(404).json({ error: 'Curso não encontrado' });
+
+        const course = courseRes.rows[0];
+        const episodesRes = await pool.query(
+            `SELECT e.id, e.title, e.video_url, e."order"
+             FROM public.episodes e
+             JOIN public.modules m ON m.id = e.module_id
+             WHERE m.course_id = $1
+             ORDER BY m."order", e."order"`,
+            [course.id]
+        );
+
+        res.json({
+            id: course.id,
+            title: course.title,
+            slug: course.slug,
+            categoryName: course.category_name,
+            episodes: episodesRes.rows.map(e => ({
+                id: e.id,
+                title: e.title,
+                videoUrl: e.video_url,
+                order: e.order
+            }))
+        });
+    } catch (err) {
+        console.error('Erro ao buscar curso para edição:', err);
+        res.status(500).json({ error: 'Erro no servidor' });
+    }
+});
+
+// 5c. Admin: Editar curso existente
+app.put('/api/admin/course/:slug', authenticateToken, requireAdmin, async (req, res) => {
+    const { slug } = req.params;
+    const { courseName, categoryName, episodes } = req.body;
+
+    if (!courseName?.trim() || !categoryName?.trim()) {
+        return res.status(400).json({ error: 'Nome do curso e categoria são obrigatórios.' });
+    }
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const courseCheck = await client.query('SELECT id FROM public.courses WHERE slug = $1', [slug]);
+        if (courseCheck.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Curso não encontrado' });
+        }
+        const courseId = courseCheck.rows[0].id;
+
+        // Encontrar ou criar categoria
+        const catSlug = slugify(categoryName);
+        let catResult = await client.query('SELECT id FROM public.categories WHERE slug = $1', [catSlug]);
+        let categoryId;
+        if (catResult.rows.length > 0) {
+            categoryId = catResult.rows[0].id;
+        } else {
+            const newCat = await client.query(
+                'INSERT INTO public.categories (name, slug) VALUES ($1, $2) RETURNING id',
+                [categoryName.trim(), catSlug]
+            );
+            categoryId = newCat.rows[0].id;
+        }
+
+        // Atualizar título e categoria do curso
+        await client.query(
+            'UPDATE public.courses SET title = $1, category_id = $2 WHERE id = $3',
+            [courseName.trim(), categoryId, courseId]
+        );
+
+        // Pegar módulo padrão (primeiro módulo do curso)
+        let modResult = await client.query(
+            'SELECT id FROM public.modules WHERE course_id = $1 ORDER BY "order" ASC LIMIT 1',
+            [courseId]
+        );
+        let moduleId;
+        if (modResult.rows.length > 0) {
+            moduleId = modResult.rows[0].id;
+        } else {
+            const newMod = await client.query(
+                'INSERT INTO public.modules (course_id, title, "order") VALUES ($1, $2, $3) RETURNING id',
+                [courseId, 'Aulas', 1]
+            );
+            moduleId = newMod.rows[0].id;
+        }
+
+        const sentEpisodes = (episodes || []).filter(ep => ep.title?.trim());
+        const sentIds = sentEpisodes.filter(ep => ep.id).map(ep => Number(ep.id));
+
+        // Deletar episódios removidos
+        if (sentIds.length > 0) {
+            await client.query(
+                `DELETE FROM public.episodes WHERE module_id = $1 AND id != ALL($2::int[])`,
+                [moduleId, sentIds]
+            );
+        } else {
+            await client.query('DELETE FROM public.episodes WHERE module_id = $1', [moduleId]);
+        }
+
+        // Upsert episódios
+        for (let i = 0; i < sentEpisodes.length; i++) {
+            const ep = sentEpisodes[i];
+            if (ep.id) {
+                // Episódio existente — atualiza video_url só se nova URL fornecida
+                if (ep.url?.trim()) {
+                    await client.query(
+                        'UPDATE public.episodes SET title = $1, "order" = $2, video_url = $3 WHERE id = $4',
+                        [ep.title.trim(), i + 1, extractVideoRef(ep.url.trim()), Number(ep.id)]
+                    );
+                } else {
+                    await client.query(
+                        'UPDATE public.episodes SET title = $1, "order" = $2 WHERE id = $3',
+                        [ep.title.trim(), i + 1, Number(ep.id)]
+                    );
+                }
+            } else {
+                // Novo episódio
+                if (!ep.url?.trim()) continue;
+                await client.query(
+                    'INSERT INTO public.episodes (module_id, title, video_url, "order") VALUES ($1, $2, $3, $4)',
+                    [moduleId, ep.title.trim(), extractVideoRef(ep.url.trim()), i + 1]
+                );
+            }
+        }
+
+        await client.query('COMMIT');
+        res.json({ success: true });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Erro ao editar curso:', err);
+        res.status(500).json({ error: 'Erro ao salvar as alterações.' });
+    } finally {
+        client.release();
+    }
+});
+
 // Helpers
 function slugify(text) {
     return text.toLowerCase()

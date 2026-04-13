@@ -29,6 +29,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -169,7 +170,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 5%;
+    padding: 0 clamp(24px, 5%, 120px);
     transition: background 0.4s ease, border-color 0.4s ease;
 }
 
@@ -220,9 +221,7 @@ header.scrolled {
    ============================================ */
 
 .hero {
-    padding: 110px 5% 70px;
-    max-width: 1400px;
-    margin: 0 auto;
+    padding: 110px clamp(24px, 5%, 120px) 70px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -301,9 +300,7 @@ header.scrolled {
    ============================================ */
 
 .category-section {
-    padding: 36px 5% 56px;
-    max-width: 1400px;
-    margin: 0 auto;
+    padding: 36px clamp(24px, 5%, 120px) 56px;
 }
 
 .category-title {
@@ -337,8 +334,8 @@ header.scrolled {
     overflow-x: auto;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
-    -webkit-mask-image: linear-gradient(to right, black 82%, transparent);
-    mask-image: linear-gradient(to right, black 82%, transparent);
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    mask-image: linear-gradient(to right, black 88%, transparent 100%);
     padding-bottom: 14px;
 }
 
@@ -346,9 +343,9 @@ header.scrolled {
     display: none;
 }
 
-/* Course Card */
+/* Course Card — mobile-first, escala até ultrawide */
 .course-card {
-    flex: 0 0 320px;
+    flex: 0 0 74vw;          /* mobile: ~1.25 cards visíveis */
     scroll-snap-align: start;
     border-radius: 14px;
     overflow: hidden;
@@ -358,6 +355,15 @@ header.scrolled {
     cursor: pointer;
     border: 1px solid var(--glass-border);
 }
+
+@media (min-width: 480px)  { .course-card { flex: 0 0 60vw; } }   /* ~1.6 cards */
+@media (min-width: 640px)  { .course-card { flex: 0 0 280px; } }
+@media (min-width: 900px)  { .course-card { flex: 0 0 300px; } }
+@media (min-width: 1200px) { .course-card { flex: 0 0 320px; } }
+@media (min-width: 1600px) { .course-card { flex: 0 0 340px; } }
+@media (min-width: 1920px) { .course-card { flex: 0 0 360px; } }
+@media (min-width: 2560px) { .course-card { flex: 0 0 400px; } }
+@media (min-width: 3200px) { .course-card { flex: 0 0 440px; } }
 
 .course-card:hover {
     transform: scale(0.975) translateY(-3px);
@@ -467,6 +473,49 @@ header.scrolled {
 
 .course-card:hover .play-icon {
     transform: translateY(0) scale(1);
+}
+
+/* Edit button (admin only) */
+.card-edit-btn {
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border-bright);
+    color: white;
+    cursor: pointer;
+    z-index: 7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.course-card:hover .card-edit-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.card-edit-btn:hover {
+    background: var(--accent-emerald);
+    border-color: var(--accent-emerald);
+    color: #000;
+    transform: scale(1.08);
+}
+
+/* Em mobile, sempre visível com baixa opacidade */
+@media (max-width: 768px) {
+    .card-edit-btn {
+        opacity: 0.55;
+        pointer-events: auto;
+    }
 }
 
 /* Progress badge */
@@ -604,12 +653,17 @@ header.scrolled {
 }
 
 .skeleton-card {
-    width: 320px;
-    height: 200px;
+    flex: 0 0 74vw;
     border-radius: 14px;
     flex-shrink: 0;
     border: 1px solid rgba(0, 191, 165, 0.05);
+    aspect-ratio: 16 / 10;
 }
+
+@media (min-width: 480px)  { .skeleton-card { flex: 0 0 60vw; } }
+@media (min-width: 640px)  { .skeleton-card { flex: 0 0 280px; } }
+@media (min-width: 900px)  { .skeleton-card { flex: 0 0 300px; } }
+@media (min-width: 1200px) { .skeleton-card { flex: 0 0 320px; } }
 
 @keyframes neon-pulse {
     0%   { background-position: 200% 0; }
@@ -1031,8 +1085,15 @@ header.scrolled {
 @media (max-width: 1100px) {
     .player-layout {
         grid-template-columns: 1fr;
-        height: calc(100vh - 68px);
+        height: auto;
+        min-height: calc(100dvh - 68px);
         overflow-y: auto;
+    }
+
+    /* No player mobile, body pode fazer scroll */
+    body.player-page {
+        overflow-y: auto;
+        height: auto;
     }
 
     .player-sidebar {
@@ -1091,6 +1152,90 @@ header.scrolled {
 
     .video-details h1 {
         font-size: 1rem;
+    }
+
+    /* Sidebar ocupa quase a tela toda em mobile pequeno */
+    .player-sidebar {
+        width: min(370px, 94vw);
+    }
+}
+
+/* ============================================
+   RESPONSIVE: CATALOG (mobile)
+   ============================================ */
+
+/* Controles do player sempre visíveis em touch */
+@media (max-width: 1100px) {
+    .video-controls {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Header: reduz padding e esconde texto do usuário */
+    header {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .player-layout {
+        min-height: calc(100dvh - 60px);
+    }
+
+    #user-display-name {
+        display: none;
+    }
+
+    .profile-section {
+        gap: 0.5rem;
+    }
+
+    /* Hero: reduz padding topo drasticamente */
+    .hero {
+        padding: 52px 16px 36px;
+    }
+
+    .hero h1 {
+        font-size: clamp(1.75rem, 7.5vw, 2.4rem);
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    .primary-btn {
+        margin-top: 1.25rem;
+        padding: 10px 22px;
+        font-size: 0.82rem;
+    }
+
+    /* Categorias: padding lateral menor */
+    .category-section {
+        padding: 24px 16px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 0 14px;
+    }
+
+    .hero {
+        padding: 44px 14px 28px;
+    }
+
+    .hero h1 {
+        font-size: clamp(1.5rem, 8vw, 2rem);
+    }
+
+    .category-section {
+        padding: 20px 14px 32px;
+    }
+
+    /* Esconde botões "Sair" e admin-badge no header em telas muito pequenas */
+    .profile-section button:not(.mobile-menu-toggle):not(#menu-toggle) {
+        display: none;
     }
 }
 

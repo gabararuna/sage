@@ -5,11 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sage | Desenvolvimento Profissional</title>
+    <!-- Auth Guard: executado antes de qualquer renderização -->
+    <script>
+        (function () {
+            try {
+                var raw = localStorage.getItem('sage_auth');
+                if (!raw || raw === 'undefined' || raw === 'null') throw new Error('no-auth');
+                var auth = JSON.parse(raw);
+                if (!auth || !auth.token) throw new Error('no-token');
+            } catch (_) {
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <style>body { visibility: hidden; }</style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>document.addEventListener('DOMContentLoaded', function(){ document.body.style.visibility = 'visible'; });</script>
 </head>
 
 <body>
@@ -65,7 +80,7 @@
         </button>
     </div>
 
-    <!-- Admin: Modal Novo Curso -->
+    <!-- Admin: Modal Novo/Editar Curso -->
     <div id="add-video-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/75 backdrop-blur-md" onclick="closeModal()"></div>
         <div class="relative w-full max-w-xl glass rounded-2xl shadow-2xl animate-in flex flex-col" style="max-height: 90vh;">
@@ -73,8 +88,8 @@
             <!-- Cabeçalho fixo -->
             <div class="flex items-start justify-between p-7 pb-4 flex-shrink-0">
                 <div>
-                    <h2 class="text-xl font-light tracking-tight text-white">Novo Curso</h2>
-                    <p class="text-zinc-500 text-xs mt-1 font-light">Preencha os dados e adicione os episódios.</p>
+                    <h2 id="modal-title" class="text-xl font-light tracking-tight text-white">Novo Curso</h2>
+                    <p id="modal-subtitle" class="text-zinc-500 text-xs mt-1 font-light">Preencha os dados e adicione os episódios.</p>
                 </div>
                 <button onclick="closeModal()" class="text-zinc-600 hover:text-white transition-colors mt-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -85,7 +100,7 @@
             <div class="overflow-y-auto flex-1 px-7 pb-2" style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;">
                 <div id="modal-alert" class="hidden mb-4"></div>
 
-                <form id="add-video-form" onsubmit="handleAddCourse(event)">
+                <form id="add-video-form" onsubmit="handleCourseSubmit(event)">
                     <!-- Campos do curso -->
                     <div class="grid grid-cols-2 gap-3 mb-5">
                         <div class="space-y-1.5 col-span-2 sm:col-span-1">
@@ -110,7 +125,7 @@
                     <div class="grid grid-cols-[28px_1fr_1fr_28px] gap-2 mb-1.5 px-1">
                         <span></span>
                         <span class="text-[9px] uppercase tracking-wider text-zinc-600">Título</span>
-                        <span class="text-[9px] uppercase tracking-wider text-zinc-600">Link do vídeo</span>
+                        <span id="col-link-label" class="text-[9px] uppercase tracking-wider text-zinc-600">Link do vídeo</span>
                         <span></span>
                     </div>
 
@@ -161,14 +176,58 @@
 
         const API_URL_ADMIN = 'http://localhost:3001/api';
         let episodeCount = 0;
+        let editSlug = null; // null = modo criação, string = modo edição
 
         function openModal() {
+            editSlug = null;
+            document.getElementById('modal-title').textContent = 'Novo Curso';
+            document.getElementById('modal-subtitle').textContent = 'Preencha os dados e adicione os episódios.';
+            document.getElementById('modal-submit-btn').textContent = 'Publicar Curso';
+            document.getElementById('col-link-label').textContent = 'Link do vídeo';
+
             const modal = document.getElementById('add-video-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
-            // Adiciona primeira linha de episódio automaticamente
             if (episodeCount === 0) addEpisodeRow();
+        }
+
+        async function openEditModal(slug) {
+            editSlug = slug;
+            document.getElementById('modal-title').textContent = 'Editar Curso';
+            document.getElementById('modal-subtitle').textContent = 'Altere os dados e os episódios do curso.';
+            document.getElementById('modal-submit-btn').textContent = 'Salvar Alterações';
+            document.getElementById('col-link-label').textContent = 'Novo link (opcional)';
+
+            const modal = document.getElementById('add-video-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            const alertEl = document.getElementById('modal-alert');
+            alertEl.textContent = 'Carregando dados do curso...';
+            alertEl.className = 'alert mb-4 bg-white/5 border-white/10 text-zinc-400';
+
+            try {
+                const auth = JSON.parse(localStorage.getItem('sage_auth') || '{}');
+                const res = await fetch(`${API_URL_ADMIN}/admin/course-edit/${slug}`, {
+                    headers: { 'Authorization': `Bearer ${auth.token}` }
+                });
+                if (!res.ok) throw new Error('Erro ao carregar');
+                const data = await res.json();
+
+                document.getElementById('course-name').value = data.title;
+                document.getElementById('course-category').value = data.categoryName;
+                document.getElementById('episodes-list-admin').innerHTML = '';
+                episodeCount = 0;
+
+                data.episodes.forEach(ep => addEpisodeRow(ep.title, ep.id));
+
+                alertEl.className = 'hidden mb-4';
+            } catch (_) {
+                alertEl.textContent = 'Não foi possível carregar os dados do curso.';
+                alertEl.className = 'alert alert-error mb-4';
+            }
         }
 
         function closeModal() {
@@ -176,13 +235,16 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.style.overflow = '';
-            // Reset
             document.getElementById('add-video-form').reset();
             document.getElementById('episodes-list-admin').innerHTML = '';
-            document.getElementById('modal-alert').classList.add('hidden');
+            document.getElementById('modal-alert').className = 'hidden mb-4';
             document.getElementById('modal-submit-btn').textContent = 'Publicar Curso';
             document.getElementById('modal-submit-btn').disabled = false;
+            document.getElementById('modal-title').textContent = 'Novo Curso';
+            document.getElementById('modal-subtitle').textContent = 'Preencha os dados e adicione os episódios.';
+            document.getElementById('col-link-label').textContent = 'Link do vídeo';
             episodeCount = 0;
+            editSlug = null;
             updateEpCount();
         }
 
@@ -193,17 +255,21 @@
             if (label) label.textContent = episodeCount === 1 ? '1 episódio' : `${episodeCount} episódios`;
         }
 
-        function addEpisodeRow() {
+        // title e epId são usados apenas no modo edição
+        function addEpisodeRow(title = '', epId = null) {
             const list = document.getElementById('episodes-list-admin');
             const idx = list.children.length + 1;
+            const isEdit = epId !== null;
+            const urlPlaceholder = isEdit ? 'Novo link (deixe vazio para manter)' : 'Link do vídeo';
             const row = document.createElement('div');
             row.className = 'episode-row-admin grid grid-cols-[28px_1fr_1fr_28px] gap-2 items-center';
+            if (epId) row.dataset.epId = epId;
             row.innerHTML = `
                 <span class="text-[10px] text-zinc-600 text-center font-light">${String(idx).padStart(2,'0')}</span>
-                <input type="text" placeholder="Título da aula"
+                <input type="text" placeholder="Título da aula" value="${title.replace(/"/g,'&quot;')}"
                     class="ep-title-input w-full bg-white/5 border border-white/8 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#00BFA5] focus:border-[#00BFA5] transition-all font-light" required>
-                <input type="text" placeholder="Link do vídeo"
-                    class="ep-url-input w-full bg-white/5 border border-white/8 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#00BFA5] focus:border-[#00BFA5] transition-all font-light" required>
+                <input type="text" placeholder="${urlPlaceholder}"
+                    class="ep-url-input w-full bg-white/5 border border-white/8 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#00BFA5] focus:border-[#00BFA5] transition-all font-light" ${isEdit ? '' : 'required'}>
                 <button type="button" onclick="removeEpisodeRow(this)"
                     class="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-600 hover:text-red-400 hover:bg-red-400/10 transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -211,25 +277,30 @@
             `;
             list.appendChild(row);
             updateEpCount();
-            // Foca no campo de título do novo episódio
-            row.querySelector('.ep-title-input').focus();
+            if (!title) row.querySelector('.ep-title-input').focus();
         }
 
         function removeEpisodeRow(btn) {
             btn.closest('.episode-row-admin').remove();
-            // Renumera
             document.querySelectorAll('.episode-row-admin').forEach((row, i) => {
                 row.querySelector('span').textContent = String(i + 1).padStart(2, '0');
             });
             updateEpCount();
         }
 
-        async function handleAddCourse(e) {
+        async function handleCourseSubmit(e) {
             e.preventDefault();
+            if (editSlug) {
+                await handleEditCourse();
+            } else {
+                await handleAddCourse();
+            }
+        }
+
+        async function handleAddCourse() {
             const alertEl = document.getElementById('modal-alert');
             const submitBtn = document.getElementById('modal-submit-btn');
-
-            alertEl.classList.add('hidden');
+            alertEl.className = 'hidden mb-4';
 
             const courseName = document.getElementById('course-name').value.trim();
             const categoryName = document.getElementById('course-category').value.trim();
@@ -258,23 +329,15 @@
                 const auth = JSON.parse(localStorage.getItem('sage_auth') || '{}');
                 const res = await fetch(`${API_URL_ADMIN}/admin/course`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${auth.token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
                     body: JSON.stringify({ courseName, categoryName, episodes })
                 });
-
                 const result = await res.json();
-
                 if (result.success) {
                     alertEl.textContent = `Curso "${courseName}" publicado com ${episodes.length} episódio(s)!`;
                     alertEl.className = 'alert alert-success mb-4';
                     submitBtn.textContent = 'Publicado!';
-                    setTimeout(() => {
-                        closeModal();
-                        window.location.reload();
-                    }, 1800);
+                    setTimeout(() => { closeModal(); window.location.reload(); }, 1800);
                 } else {
                     alertEl.textContent = result.error || 'Erro ao publicar curso.';
                     alertEl.className = 'alert alert-error mb-4';
@@ -285,6 +348,63 @@
                 alertEl.textContent = 'Não foi possível conectar ao servidor.';
                 alertEl.className = 'alert alert-error mb-4';
                 submitBtn.textContent = 'Publicar Curso';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handleEditCourse() {
+            const alertEl = document.getElementById('modal-alert');
+            const submitBtn = document.getElementById('modal-submit-btn');
+            alertEl.className = 'hidden mb-4';
+
+            const courseName = document.getElementById('course-name').value.trim();
+            const categoryName = document.getElementById('course-category').value.trim();
+
+            if (!courseName || !categoryName) {
+                alertEl.textContent = 'Preencha o nome do curso e a categoria.';
+                alertEl.className = 'alert alert-error mb-4';
+                return;
+            }
+
+            const rows = document.querySelectorAll('.episode-row-admin');
+            const episodes = Array.from(rows).map(row => ({
+                id: row.dataset.epId || null,
+                title: row.querySelector('.ep-title-input').value.trim(),
+                url: row.querySelector('.ep-url-input').value.trim()
+            })).filter(ep => ep.title);
+
+            if (episodes.length === 0) {
+                alertEl.textContent = 'O curso precisa ter ao menos um episódio.';
+                alertEl.className = 'alert alert-error mb-4';
+                return;
+            }
+
+            submitBtn.textContent = 'Salvando...';
+            submitBtn.disabled = true;
+
+            try {
+                const auth = JSON.parse(localStorage.getItem('sage_auth') || '{}');
+                const res = await fetch(`${API_URL_ADMIN}/admin/course/${editSlug}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
+                    body: JSON.stringify({ courseName, categoryName, episodes })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    alertEl.textContent = `Curso "${courseName}" atualizado com sucesso!`;
+                    alertEl.className = 'alert alert-success mb-4';
+                    submitBtn.textContent = 'Salvo!';
+                    setTimeout(() => { closeModal(); window.location.reload(); }, 1800);
+                } else {
+                    alertEl.textContent = result.error || 'Erro ao salvar alterações.';
+                    alertEl.className = 'alert alert-error mb-4';
+                    submitBtn.textContent = 'Salvar Alterações';
+                    submitBtn.disabled = false;
+                }
+            } catch (_) {
+                alertEl.textContent = 'Não foi possível conectar ao servidor.';
+                alertEl.className = 'alert alert-error mb-4';
+                submitBtn.textContent = 'Salvar Alterações';
                 submitBtn.disabled = false;
             }
         }
