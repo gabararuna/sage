@@ -8,9 +8,11 @@
  * PWD: bcryptjs (pure JS)
  */
 
-import { neon } from '@neondatabase/serverless';
+import { neon, neonConfig } from '@neondatabase/serverless';
 import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
+
+neonConfig.fetchConnectionCache = true;
 
 const BCRYPT_ROUNDS = 8; // Compatível com Workers; verifica hashes legados com rounds maiores
 
@@ -96,6 +98,22 @@ export async function onRequest(context) {
         // ── GET /health ──────────────────────────────────────────────────────
         if (path === '/health' && method === 'GET') {
             return json({ status: 'ok', message: 'Servidor Sage está vivo!' });
+        }
+
+        // ── GET /debug (diagnóstico — remova em produção após resolver) ──────
+        if (path === '/debug' && method === 'GET') {
+            const checks = {
+                DATABASE_URL: env.DATABASE_URL ? 'configurado ✓' : 'AUSENTE ✗',
+                JWT_SECRET: env.JWT_SECRET ? 'configurado ✓' : 'ausente (usando fallback)',
+            };
+            try {
+                const testSql = neon(env.DATABASE_URL);
+                await testSql`SELECT 1`;
+                checks.db_connection = 'conectado ✓';
+            } catch (e) {
+                checks.db_connection = `ERRO: ${e.message}`;
+            }
+            return json(checks);
         }
 
         // ── POST /auth/login ─────────────────────────────────────────────────
@@ -393,7 +411,12 @@ export async function onRequest(context) {
         return json({ error: 'Rota não encontrada' }, 404);
 
     } catch (err) {
-        console.error('[Sage Worker] Erro:', err.message);
-        return json({ error: 'Erro interno do servidor' }, 500);
+        console.error('[Sage Worker] Erro:', err.message, err.stack);
+        return json({
+            error: 'Erro interno do servidor',
+            detail: err.message,          // visível temporariamente para diagnóstico
+            path,
+            method
+        }, 500);
     }
 }
