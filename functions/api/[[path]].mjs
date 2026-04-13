@@ -237,15 +237,21 @@ export async function onRequest(context) {
         }
 
         // ── GET /play/:episodeId ─────────────────────────────────────────────
-        const playMatch = path.match(/^\/play\/(\d+)$/);
+        const playMatch = path.match(/^\/play\/([^/]+)$/);
         if (playMatch && method === 'GET') {
             const user = await authenticate(request, env);
             if (!user) return json({ error: 'Token não fornecido' }, 401);
 
-            const epId = parseInt(playMatch[1]);
+            const epId = parseInt(playMatch[1], 10);
+            if (isNaN(epId)) return json({ error: 'ID inválido' }, 400);
+
             const rows = await sql`SELECT video_url FROM public.episodes WHERE id = ${epId}`;
             if (!rows.length) return json({ error: 'Conteúdo não encontrado' }, 404);
-            return json({ ref: rows[0].video_url });
+
+            const ref = rows[0].video_url;
+            if (!ref) return json({ error: 'Vídeo não configurado para este episódio' }, 404);
+
+            return json({ ref });
         }
 
         // ── GET /admin/course-edit/:slug ─────────────────────────────────────
