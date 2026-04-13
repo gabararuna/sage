@@ -4,123 +4,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sage | Desenvolvimento Profissional</title>
-    <!-- Google Fonts -->
+    <title>Sage | Player</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <header>
-        <div class="logo"><a href="index.html">Sage</a></div>
-        <button class="mobile-menu-toggle" id="menu-toggle">
-            <span>☰</span>
-        </button>
+<!-- player-page: ativa layout fixo (overflow:hidden) via CSS -->
+<body class="player-page">
+
+    <header id="player-header" class="scrolled">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="logo">Sa<span>ge</span></a>
+        </div>
+
+        <div class="profile-section">
+            <span id="admin-badge" class="hidden text-[10px] px-2.5 py-1 rounded-full bg-[#00BFA5]/10 text-[#00BFA5] border border-[#00BFA5]/20 tracking-widest uppercase">Admin</span>
+
+            <div class="user-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BFA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                <span id="user-display-name" class="truncate max-w-[120px]">...</span>
+            </div>
+
+            <button onclick="logout()" class="text-[11px] font-light text-zinc-500 hover:text-white transition-colors hidden sm:block">Sair</button>
+
+            <!-- Botão menu mobile (sidebar) -->
+            <button id="menu-toggle" class="mobile-menu-toggle" aria-label="Lista de episódios">
+                <span>☰</span>
+            </button>
+        </div>
     </header>
 
     <main class="player-layout">
+
+        <!-- Área principal do player -->
         <section class="player-main">
             <div class="player-container">
-                <nav class="player-breadcrumbs">
-                    <a href="index.html">Sage</a> &gt; <span id="course-title-crumb">...</span>
+
+                <!-- Breadcrumb -->
+                <nav class="player-breadcrumbs" id="player-breadcrumbs">
+                    <a href="index.html">Catálogo</a>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    <span>Carregando...</span>
                 </nav>
 
-                <div id="video-wrapper">
+                <!-- Vídeo -->
+                <div id="video-wrapper" oncontextmenu="return false;">
+
+                    <!-- Container do player (preenchido pela API de reprodução) -->
                     <div id="player"></div>
+
+                    <!-- Escudo de interação (bloqueia cliques diretos no player) -->
+                    <div id="video-shield"></div>
+
+                    <!-- Sobreposição de gradiente -->
                     <div class="player-overlay" id="overlay"></div>
 
-                    <!-- Custom Video Cover -->
+                    <!-- Capa do vídeo (poster) -->
                     <div id="video-cover" class="video-cover">
                         <div class="play-button-large">
-                            <svg viewBox="0 0 24 24" width="48" height="48" fill="white">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="black"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
 
-                    <!-- Custom Error Overlay -->
+                    <!-- Overlay de erro -->
                     <div id="video-error" class="video-error-overlay">
-                        <svg viewBox="0 0 24 24" width="64" height="64" fill="var(--accent-primary)"
-                            style="margin-bottom: 20px;">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                        <svg viewBox="0 0 24 24" width="52" height="52" fill="var(--accent-emerald)" style="margin-bottom:16px; opacity:0.8">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
-                        <h2 style="margin-bottom: 10px;">Ops! Vídeo Indisponível</h2>
-                        <p style="color: var(--text-secondary); max-width: 300px;">Este conteúdo não está disponível no
-                            momento. Nossa equipe técnica já foi notificada.</p>
+                        <h2>Conteúdo indisponível</h2>
+                        <p>Este conteúdo não está disponível no momento. Por favor, tente novamente mais tarde.</p>
                     </div>
 
-                    <!-- Custom Controls -->
+                    <!-- Controles customizados -->
                     <div class="video-controls" id="controls">
                         <button class="control-btn" id="skip-back" title="Voltar 10s">
-                            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="12" y="15" font-size="8" text-anchor="middle" fill="currentColor" font-weight="bold">10</text></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
                         </button>
 
-                        <button class="control-btn" id="play-pause" title="Play/Pause">
-                            <svg viewBox="0 0 24 24" id="play-icon">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                            <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                            </svg>
+                        <button class="control-btn" id="play-pause" title="Play / Pause">
+                            <div id="play-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <div id="pause-icon" style="display:none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            </div>
                         </button>
 
                         <button class="control-btn" id="skip-forward" title="Avançar 10s">
-                            <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="12" y="15" font-size="8" text-anchor="middle" fill="currentColor" font-weight="bold">10</text></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M12 7v5l4 2"/></svg>
                         </button>
 
-                        <button class="control-btn" id="toggle-captions" title="Legendas (CC)">
-                            <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5V10.5h-2v3h2V13H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5V10.5h-2v3h2V13H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
+                        <button class="control-btn" id="toggle-captions" title="Legendas">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="5" rx="2" ry="2"/><path d="M7 15h4m4 0h2M7 11h2m4 0h4"/></svg>
                         </button>
 
                         <div class="progress-bar-container" id="progress-container">
                             <div class="progress-bar-active" id="progress-bar"></div>
                         </div>
 
-                        <button class="control-btn" id="mute-unmute" title="Mute/Unmute">
-                            <svg viewBox="0 0 24 24" id="volume-up">
-                                <path
-                                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-                            </svg>
-                            <svg viewBox="0 0 24 24" id="volume-off" style="display:none;">
-                                <path
-                                    d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
-                            </svg>
+                        <button class="control-btn" id="mute-unmute" title="Mudo / Som">
+                            <div id="volume-up">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                            </div>
+                            <div id="volume-off" style="display:none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" x2="17" y1="9" y2="15"/><line x1="17" x2="23" y1="9" y2="15"/></svg>
+                            </div>
                         </button>
 
-                        <button class="control-btn" id="fullscreen" title="Fullscreen">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-                            </svg>
+                        <button class="control-btn" id="fullscreen" title="Tela cheia">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
                         </button>
                     </div>
                 </div>
 
-                <div class="video-details" style="margin-top: 1.5rem;">
-                    <h1 id="playing-title">Título do Episódio</h1>
-                    <p id="playing-desc" style="color: var(--text-secondary); margin-top: 0.5rem;">Descrição do episódio
-                        aqui...</p>
-                    <button id="mark-complete" class="primary-btn"
-                        style="margin-top: 1.5rem; padding: 12px 24px; background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        Marcar como concluído
+                <!-- Detalhes do episódio -->
+                <div class="video-details">
+                    <h1 id="playing-title">Carregando...</h1>
+                    <p id="playing-desc" class="mt-1"></p>
+                    <button id="mark-complete" class="primary-btn" style="margin-top: 1.25rem;">
+                        Concluir Aula
                     </button>
                 </div>
+
             </div>
         </section>
 
+        <!-- Sidebar com lista de episódios -->
         <aside class="player-sidebar" id="sidebar">
-            <div class="sidebar-loading">Carregando lista...</div>
+            <div class="sidebar-loading">Carregando lista de aulas...</div>
         </aside>
+
     </main>
 
+    <!-- Backdrop da sidebar mobile -->
     <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
-    <!-- YouTube iFrame API -->
+
+    <!-- API de reprodução de mídia (carregada dinamicamente pelo player) -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="app.js"></script>
+    <script>
+        // Exibir dados do usuário imediatamente
+        (function () {
+            const auth = JSON.parse(localStorage.getItem('sage_auth') || '{}');
+            const nameEl = document.getElementById('user-display-name');
+            if (nameEl) nameEl.textContent = auth.name || auth.email?.split('@')[0] || 'Usuário';
+            if (auth.role === 'admin') {
+                document.getElementById('admin-badge')?.classList.remove('hidden');
+            }
+        })();
+    </script>
 </body>
 
 </html>

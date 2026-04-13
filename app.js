@@ -1,42 +1,123 @@
 /**
- * SAGE LMS App Logic - Modernized
+ * SAGE LMS — App Logic
  */
 
 let lmsData = null;
 let player = null;
 let currentEpId = null;
 let currentCourseId = null;
+let progressInterval = null;
 
-// Initialization
+const API_URL = 'http://localhost:3001/api';
+
+// --- AUTH ---
+
+function requireAuth() {
+    try {
+        const raw = localStorage.getItem('sage_auth');
+        if (!raw || raw === 'undefined' || raw === 'null') {
+            window.location.href = 'login.html';
+            return null;
+        }
+        return JSON.parse(raw);
+    } catch (e) {
+        localStorage.removeItem('sage_auth');
+        window.location.href = 'login.html';
+        return null;
+    }
+}
+
+function logout() {
+    localStorage.removeItem('sage_auth');
+    window.location.href = 'login.html';
+}
+
+// Redirecionar para login se não autenticado (exceto nas páginas públicas)
+if (!window.location.pathname.includes('login.html') &&
+    !window.location.pathname.includes('register.html') &&
+    !window.location.pathname.includes('confirm.html')) {
+    requireAuth();
+}
+
+// --- IMAGE FALLBACK ---
+
+function handleImageError(img, title) {
+    const parent = img.parentElement;
+    parent.classList.add('fallback');
+    const initials = title.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    parent.innerHTML = `<div class="fallback-initials">${initials}</div>`;
+}
+
+// --- HEADER SCROLL EFFECT ---
+
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (!header) return;
+    header.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// --- INIT ---
+
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('SAGE: App iniciado');
-    
-    // Robust detection: check for #catalog-root or the playback wrapper
     const catalogRoot = document.getElementById('catalog-root');
     const isPlayerPage = !!document.getElementById('video-wrapper');
-    
-    console.log('SAGE: Tipo de página:', isPlayerPage ? 'Player' : 'Catálogo');
 
     if (!isPlayerPage && catalogRoot) {
-        console.log('SAGE: Mostrando skeletons');
         showSkeletons();
     }
 
     try {
-        console.log('SAGE: Buscando data.json...');
-        const response = await fetch('data.json');
-        if (!response.ok) throw new Error(`Status HTTP: ${response.status}`);
+        const authInfo = requireAuth();
+        if (!authInfo) return;
+
+        const response = await fetch(`${API_URL}/catalog`, {
+            headers: { 'Authorization': `Bearer ${authInfo.token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            logout();
+            return;
+        }
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         lmsData = await response.json();
-        console.log('SAGE: Dados carregados com sucesso');
-        
+
+        if (isPlayerPage) {
+            // No player, carrega os detalhes completos do curso antes de inicializar
+            const params = new URLSearchParams(window.location.search);
+            const courseSlug = params.get('curso');
+            if (courseSlug) {
+                const courseRes = await fetch(`${API_URL}/course/${courseSlug}`, {
+                    headers: { 'Authorization': `Bearer ${authInfo.token}` }
+                });
+                if (courseRes.ok) {
+                    const fullCourse = await courseRes.json();
+                    injectFullCourse(fullCourse);
+                }
+            }
+        }
+
         initApp(isPlayerPage);
+
+        if (window.lucide) window.lucide.createIcons();
+
     } catch (err) {
-        console.error('SAGE ERROR: Falha ao carregar data.json', err);
+        console.error('SAGE: Falha ao carregar dados', err);
+
+        // Fallback local para debug visual
+        if (!lmsData) {
+            try {
+                const res = await fetch('data.json');
+                lmsData = await res.json();
+                initApp(isPlayerPage);
+            } catch (_) { /* ignore */ }
+        }
+
         const root = document.getElementById('catalog-root');
-        if (root) {
-            root.innerHTML = `<div style="padding: 4%; color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-                <strong>Erro de Carregamento:</strong><br>
-                ${err.message}. Certifique-se de estar usando um servidor local (localhost) e que o arquivo data.json existe.
+        if (root && !lmsData) {
+            root.innerHTML = `<div class="alert alert-error" style="margin: 10% 5%;">
+                <strong>Erro de Carregamento</strong><br>${err.message}
             </div>`;
         }
     }
@@ -45,11 +126,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showSkeletons() {
     const root = document.getElementById('catalog-root');
     if (!root) return;
-    
     root.innerHTML = `
         <section class="category-section">
-            <div class="skeleton" style="width: 200px; height: 30px; margin-bottom: 2rem;"></div>
-            <div class="carousel-container" style="overflow: hidden;">
+            <div class="skeleton" style="width: 160px; height: 12px; margin-bottom: 1.5rem;"></div>
+            <div class="carousel-container">
                 ${'<div class="skeleton skeleton-card"></div>'.repeat(5)}
             </div>
         </section>
@@ -64,64 +144,73 @@ function initApp(isPlayerPage) {
     }
 }
 
-// --- CATALOG LOGIC ---
+// --- CATALOG ---
 
 function renderCatalog() {
     const root = document.getElementById('catalog-root');
     if (!root) return;
-    
+
     root.innerHTML = '';
 
-    if (!lmsData || !lmsData.categories || lmsData.categories.length === 0) {
+    if (!lmsData?.categories?.length) {
         root.innerHTML = '<div class="empty-state-global">Em breve novos conteúdos...</div>';
         return;
     }
-    
+
     lmsData.categories.forEach((category, catIdx) => {
         const section = document.createElement('section');
         section.className = 'category-section animate-in';
         section.style.animationDelay = `${catIdx * 0.1}s`;
-        
+
         section.innerHTML = `
             <h2 class="category-title">${category.name}</h2>
             <div class="carousel-wrapper">
-                <button class="carousel-btn prev" aria-label="Anterior">❮</button>
+                <button class="carousel-btn prev" aria-label="Anterior">&#10094;</button>
                 <div class="carousel-container"></div>
-                <button class="carousel-btn next" aria-label="Próximo">❯</button>
+                <button class="carousel-btn next" aria-label="Próximo">&#10095;</button>
             </div>
         `;
-        
+
         const container = section.querySelector('.carousel-container');
 
-        if (category.courses.length === 0) {
+        if (!category.courses.length) {
             container.innerHTML = '<div class="empty-state">Em breve...</div>';
         } else {
             category.courses.forEach((course, courseIdx) => {
                 const isCompleted = checkIfCourseCompleted(course.id);
                 const card = document.createElement('div');
-                card.className = 'course-card animate-in visible';
-                card.style.animationDelay = `${(catIdx * 0.2) + (courseIdx * 0.05)}s`;
-                
+                card.className = 'course-card animate-in';
+                card.style.animationDelay = `${(catIdx * 0.15) + (courseIdx * 0.05)}s`;
+
+                const bannerUrl = course.banner && course.banner !== 'null'
+                    ? course.banner
+                    : 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800';
+
                 card.innerHTML = `
                     <div class="course-banner">
-                        <img src="${course.banner}" alt="${course.title}" loading="lazy">
+                        <img src="${bannerUrl}" alt="${course.title}" loading="lazy"
+                             onerror="handleImageError(this, '${course.title.replace(/'/g, "\\'")}')">
+                        <div class="hover-info">
+                            <div class="play-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <span class="ep-count">${course.episode_count || 0} Episódios</span>
+                        </div>
+                        <div class="course-label">
+                            <h3 class="course-title">${course.title}</h3>
+                        </div>
                     </div>
                     <div class="card-progress ${isCompleted ? 'completed' : ''}">✓</div>
-                    <div class="course-info">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-meta">${countEpisodes(course)} Episódios</p>
-                    </div>
                 `;
-                
+
                 card.onclick = () => {
-                    const firstEp = course.modules[0].episodes[0].id;
-                    window.location.href = `player.html?curso=${course.id}&ep=${firstEp}`;
+                    window.location.href = `player.html?curso=${course.id}`;
                 };
-                
+
                 container.appendChild(card);
             });
         }
-        
+
         root.appendChild(section);
         setupCarouselEvents(section);
     });
@@ -131,94 +220,113 @@ function setupCarouselEvents(section) {
     const container = section.querySelector('.carousel-container');
     const prev = section.querySelector('.prev');
     const next = section.querySelector('.next');
-    
-    if (prev && next && container) {
-        prev.onclick = () => container.scrollBy({ left: -400, behavior: 'smooth' });
-        next.onclick = () => container.scrollBy({ left: 400, behavior: 'smooth' });
+    if (!prev || !next || !container) return;
+
+    prev.onclick = () => container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
+    next.onclick = () => container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
+}
+
+function injectFullCourse(fullCourse) {
+    if (!lmsData) return;
+    for (const cat of lmsData.categories) {
+        const idx = cat.courses.findIndex(c => c.id === fullCourse.slug || c.slug === fullCourse.slug);
+        if (idx !== -1) {
+            // Preserva o id original (slug) usado para navegação — o fullCourse tem o id numérico do banco
+            const navId = cat.courses[idx].id;
+            cat.courses[idx] = { ...cat.courses[idx], ...fullCourse, id: navId };
+            break;
+        }
     }
 }
 
-function countEpisodes(course) {
-    return course.modules.reduce((acc, m) => acc + m.episodes.length, 0);
-}
-
-// --- PLAYER LOGIC ---
+// --- PLAYER ---
 
 function initPlayerPage() {
     const params = new URLSearchParams(window.location.search);
     currentCourseId = params.get('curso');
     currentEpId = params.get('ep');
-    
+
     const course = findCourse(currentCourseId);
     if (!course) {
         window.location.href = 'index.html';
         return;
     }
-    
+
     const episode = findEpisode(course, currentEpId);
-    if (!episode) return;
+
+    if (!episode) {
+        // Redirecionar para o primeiro episódio
+        const firstEp = course.modules?.[0]?.episodes?.[0]?.id;
+        if (firstEp) {
+            window.location.href = `player.html?curso=${currentCourseId}&ep=${firstEp}`;
+        }
+        return;
+    }
 
     updatePlayerInfo(episode);
     initCustomControls();
     blockContextMenu();
-    
     renderBreadcrumbs(course);
     renderSidebar(course);
-    
-    // Mobile Menu Toggle
+
+    // Mobile sidebar toggle
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebar-backdrop');
-    
+
     function toggleSidebar() {
         if (!sidebar || !backdrop) return;
         const isActive = sidebar.classList.toggle('active');
         backdrop.classList.toggle('active');
         document.body.classList.toggle('menu-open');
-        document.documentElement.classList.toggle('menu-open'); // For stronger scroll lock
-        const icon = menuToggle.querySelector('span');
+        const icon = menuToggle?.querySelector('span');
         if (icon) icon.textContent = isActive ? '✕' : '☰';
     }
 
-    if (menuToggle && sidebar && backdrop) {
+    if (menuToggle) {
         menuToggle.onclick = (e) => {
             e.stopPropagation();
             toggleSidebar();
         };
+    }
 
+    if (backdrop) {
         backdrop.onclick = () => {
-            if (sidebar.classList.contains('active')) {
-                toggleSidebar();
-            }
+            if (sidebar?.classList.contains('active')) toggleSidebar();
         };
     }
 
-    // Video Area Click interaction
-    const overlay = document.getElementById('overlay');
+    // Video cover / poster
     const cover = document.getElementById('video-cover');
     if (cover) {
-        cover.style.backgroundImage = `url('${episode.banner}')`;
-        cover.addEventListener('click', () => {
-            if (player && player.playVideo) {
-                player.playVideo();
-                // Transition handled in onPlayerStateChange
-            }
-        });
+        const bannerUrl = episode.banner && episode.banner !== 'null'
+            ? episode.banner
+            : 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800';
+        cover.style.backgroundImage = `url('${bannerUrl}')`;
+        cover.style.display = 'flex';
+        cover.addEventListener('click', () => player?.playVideo?.());
     }
 
-    if (overlay) {
-        overlay.addEventListener('click', () => {
+    // Shield click → play/pause
+    const shield = document.getElementById('video-shield');
+    if (shield) {
+        shield.addEventListener('click', () => {
             if (!player) return;
-            const state = player.getPlayerState();
-            if (state === 1) { // Playing
-                player.pauseVideo();
-            } else {
-                player.playVideo();
-            }
+            player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
         });
+        shield.addEventListener('dblclick', e => e.preventDefault());
     }
 
-    // Mark as complete
+    // Block devtools shortcuts
+    window.addEventListener('keydown', (e) => {
+        if (e.keyCode === 123 ||
+            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+            (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83))) {
+            e.preventDefault();
+        }
+    });
+
+    // Mark as complete button
     const completeBtn = document.getElementById('mark-complete');
     if (completeBtn) {
         if (isEpisodeCompleted(currentEpId)) {
@@ -230,7 +338,8 @@ function initPlayerPage() {
 }
 
 function findCourse(id) {
-    for (let cat of lmsData.categories) {
+    if (!lmsData) return null;
+    for (const cat of lmsData.categories) {
         const found = cat.courses.find(c => c.id === id);
         if (found) return found;
     }
@@ -238,8 +347,9 @@ function findCourse(id) {
 }
 
 function findEpisode(course, id) {
-    for (let mod of course.modules) {
-        const ep = mod.episodes.find(e => e.id === id);
+    if (!course?.modules) return null;
+    for (const mod of course.modules) {
+        const ep = mod.episodes?.find(e => String(e.id) === String(id));
         if (ep) return ep;
     }
     return null;
@@ -248,46 +358,55 @@ function findEpisode(course, id) {
 function renderBreadcrumbs(course) {
     const container = document.getElementById('player-breadcrumbs');
     if (!container) return;
-
     container.innerHTML = `
-        <a href="index.html">Sage</a>
-        <span>&gt;</span>
-        <span style="color: var(--text-primary)">${course.title}</span>
+        <a href="index.html">Catálogo</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span>${course.title}</span>
     `;
 }
 
 function renderSidebar(course) {
     const sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
-    
-    sidebar.innerHTML = `<h2>${course.title}</h2>`;
-    
-    course.modules.forEach(mod => {
+
+    sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <h2>${course.title}</h2>
+        </div>
+        <div class="episodes-list" id="episodes-list"></div>
+    `;
+
+    const listContainer = sidebar.querySelector('#episodes-list');
+
+    course.modules?.forEach(mod => {
         const modTitle = document.createElement('div');
         modTitle.className = 'module-title';
-        modTitle.innerText = mod.title;
-        sidebar.appendChild(modTitle);
-        
-        mod.episodes.forEach((ep, idx) => {
+        modTitle.innerText = mod.mod_title || mod.title;
+        listContainer.appendChild(modTitle);
+
+        const episodes = mod.episodes || [];
+        episodes.forEach((ep, idx) => {
             const item = document.createElement('div');
-            item.className = `episode-item ${ep.id === currentEpId ? 'active' : ''}`;
-            
+            item.className = `episode-item ${String(ep.id) === String(currentEpId) ? 'active' : ''}`;
+
             const isCompleted = isEpisodeCompleted(ep.id);
-            
+
             item.innerHTML = `
-                <div class="ep-number">${(idx + 1).toString().padStart(2, '0')}</div>
+                <div class="ep-number">${String(idx + 1).padStart(2, '0')}</div>
                 <div class="ep-content">
                     <div class="ep-title">${ep.title}</div>
-                    <div class="ep-duration">${ep.duration}</div>
+                    <div class="ep-duration">${ep.duration || ''}</div>
                 </div>
-                <div class="ep-check ${isCompleted ? 'completed' : ''}">✓</div>
+                <div class="ep-check ${isCompleted ? 'completed' : ''}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
             `;
-            
+
             item.onclick = () => {
-                window.location.href = `player.html?curso=${course.id}&ep=${ep.id}`;
+                window.location.href = `player.html?curso=${course.id || course.slug}&ep=${ep.id}`;
             };
-            
-            sidebar.appendChild(item);
+
+            listContainer.appendChild(item);
         });
     });
 }
@@ -296,59 +415,74 @@ function updatePlayerInfo(episode) {
     const title = document.getElementById('playing-title');
     const desc = document.getElementById('playing-desc');
     if (title) title.innerText = episode.title;
-    if (desc) desc.innerText = episode.description;
+    if (desc) desc.innerText = episode.description || '';
 }
 
-// YouTube API Callback
+// --- PLAYER API CALLBACK (carregado pelo script externo) ---
+
 function onYouTubeIframeAPIReady() {
     const params = new URLSearchParams(window.location.search);
-    const courseId = params.get('curso');
     const epId = params.get('ep');
-    
-    if (!lmsData) {
-        // Retry if data not loaded yet
-        setTimeout(onYouTubeIframeAPIReady, 100);
+
+    if (!epId) {
+        setTimeout(onYouTubeIframeAPIReady, 200);
         return;
     }
 
-    const course = findCourse(courseId);
-    const episode = findEpisode(course, epId);
-    
-    if (episode) {
-        player = new YT.Player('player', {
-            videoId: episode.youtubeId,
-            playerVars: {
-                'controls': 0,
-                'modestbranding': 1,
-                'rel': 0,
-                'cc_load_policy': 1,
-                'iv_load_policy': 3,
-                'disablekb': 1,
-                'origin': window.location.origin
-            },
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange,
-                'onError': onPlayerError
-            }
-        });
-    }
+    const authInfo = requireAuth();
+    if (!authInfo) return;
+
+    // Busca a referência do conteúdo no servidor (isola a origem do vídeo)
+    fetch(`${API_URL}/play/${epId}`, {
+        headers: { 'Authorization': `Bearer ${authInfo.token}` }
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('Conteúdo não disponível');
+        return r.json();
+    })
+    .then(data => {
+        if (!data.ref) throw new Error('Referência inválida');
+        initMediaPlayer(data.ref);
+    })
+    .catch(err => {
+        console.error('SAGE: Erro ao carregar conteúdo', err);
+        const errorEl = document.getElementById('video-error');
+        if (errorEl) errorEl.style.display = 'flex';
+        const cover = document.getElementById('video-cover');
+        if (cover) cover.style.display = 'none';
+    });
 }
 
-function onPlayerReady(event) {
-    console.log('Player Pronto');
+function initMediaPlayer(ref) {
+    player = new YT.Player('player', {
+        videoId: ref,
+        playerVars: {
+            controls: 0,
+            modestbranding: 1,
+            rel: 0,
+            cc_load_policy: 1,
+            iv_load_policy: 3,
+            disablekb: 1,
+            origin: window.location.origin
+        },
+        events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange,
+            onError: onPlayerError
+        }
+    });
+}
+
+function onPlayerReady() {
+    // Player pronto
 }
 
 function onPlayerError(event) {
-    console.error('Erro no Player YouTube:', event.data);
-    const errorOverlay = document.getElementById('video-error');
+    console.error('SAGE: Erro no player', event.data);
+    const errorEl = document.getElementById('video-error');
+    if (errorEl) errorEl.style.display = 'flex';
     const cover = document.getElementById('video-cover');
-    if (errorOverlay) {
-        errorOverlay.style.display = 'flex';
-    }
-    if (cover) {
-        cover.style.display = 'none';
-    }
+    if (cover) cover.style.display = 'none';
 }
 
 function onPlayerStateChange(event) {
@@ -362,7 +496,7 @@ function onPlayerStateChange(event) {
         if (cover) {
             cover.style.opacity = '0';
             setTimeout(() => {
-                if (player.getPlayerState() === 1) cover.style.display = 'none';
+                if (player?.getPlayerState() === 1) cover.style.display = 'none';
             }, 500);
         }
         startProgressLoop();
@@ -381,35 +515,38 @@ function onPlayerStateChange(event) {
     }
 }
 
+// --- CUSTOM CONTROLS ---
+
 function initCustomControls() {
     const playBtn = document.getElementById('play-pause');
     const muteBtn = document.getElementById('mute-unmute');
     const fsBtn = document.getElementById('fullscreen');
     const progressContainer = document.getElementById('progress-container');
-    
+    const skipBack = document.getElementById('skip-back');
+    const skipForward = document.getElementById('skip-forward');
+
     if (playBtn) {
         playBtn.onclick = () => {
-            const state = player.getPlayerState();
-            if (state === YT.PlayerState.PLAYING) {
-                player.pauseVideo();
-            } else {
-                player.playVideo();
-            }
+            if (!player) return;
+            player.getPlayerState() === YT.PlayerState.PLAYING
+                ? player.pauseVideo()
+                : player.playVideo();
         };
     }
 
     if (muteBtn) {
         muteBtn.onclick = () => {
+            if (!player) return;
             const volUp = document.getElementById('volume-up');
             const volOff = document.getElementById('volume-off');
             if (player.isMuted()) {
                 player.unMute();
-                volUp.style.display = 'block';
-                volOff.style.display = 'none';
+                if (volUp) volUp.style.display = 'block';
+                if (volOff) volOff.style.display = 'none';
             } else {
                 player.mute();
-                volUp.style.display = 'none';
-                volOff.style.display = 'block';
+                if (volUp) volUp.style.display = 'none';
+                if (volOff) volOff.style.display = 'block';
             }
         };
     }
@@ -418,48 +555,34 @@ function initCustomControls() {
         fsBtn.onclick = () => {
             const wrapper = document.getElementById('video-wrapper');
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (wrapper.requestFullscreen) wrapper.requestFullscreen();
-                else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+                (wrapper.requestFullscreen || wrapper.webkitRequestFullscreen).call(wrapper);
             } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                (document.exitFullscreen || document.webkitExitFullscreen).call(document);
             }
         };
     }
 
-    // Skip Buttons
-    const skipBack = document.getElementById('skip-back');
-    const skipForward = document.getElementById('skip-forward');
     if (skipBack) {
-        skipBack.onclick = () => {
-            if (player) player.seekTo(player.getCurrentTime() - 10, true);
-        };
+        skipBack.onclick = () => player?.seekTo(player.getCurrentTime() - 10, true);
     }
     if (skipForward) {
-        skipForward.onclick = () => {
-            if (player) player.seekTo(player.getCurrentTime() + 10, true);
-        };
+        skipForward.onclick = () => player?.seekTo(player.getCurrentTime() + 10, true);
     }
 
-    // Captions Toggle
     const ccBtn = document.getElementById('toggle-captions');
     if (ccBtn) {
-        let ccEnabled = true; // matches cc_load_policy: 1
+        let ccEnabled = true;
         ccBtn.onclick = () => {
             if (!player) return;
             ccEnabled = !ccEnabled;
-            if (ccEnabled) {
-                player.loadModule('captions');
-                ccBtn.style.color = 'var(--accent-primary)';
-            } else {
-                player.unloadModule('captions');
-                ccBtn.style.color = 'white';
-            }
+            ccEnabled ? player.loadModule('captions') : player.unloadModule('captions');
+            ccBtn.style.color = ccEnabled ? 'var(--accent-emerald)' : 'white';
         };
     }
 
     if (progressContainer) {
         progressContainer.onclick = (e) => {
+            if (!player) return;
             const rect = progressContainer.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
             player.seekTo(pos * player.getDuration(), true);
@@ -467,14 +590,25 @@ function initCustomControls() {
     }
 }
 
+// --- PROGRESS LOOP ---
+
 function startProgressLoop() {
-    setInterval(() => {
-        if (player && player.getCurrentTime) {
-            const progress = (player.getCurrentTime() / player.getDuration()) * 100;
-            const bar = document.getElementById('progress-bar');
-            if (bar) bar.style.width = progress + '%';
-        }
-    }, 1000);
+    stopProgressLoop();
+    progressInterval = setInterval(() => {
+        if (!player?.getCurrentTime) return;
+        const total = player.getDuration();
+        if (!total) return;
+        const progress = (player.getCurrentTime() / total) * 100;
+        const bar = document.getElementById('progress-bar');
+        if (bar) bar.style.width = progress + '%';
+    }, 500);
+}
+
+function stopProgressLoop() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
 }
 
 function blockContextMenu() {
@@ -485,35 +619,34 @@ function blockContextMenu() {
 
 function markAsComplete(epId, courseId) {
     let completed = JSON.parse(localStorage.getItem('sage_progress') || '[]');
-    if (!completed.includes(epId)) {
-        completed.push(epId);
+    if (!completed.includes(String(epId))) {
+        completed.push(String(epId));
         localStorage.setItem('sage_progress', JSON.stringify(completed));
     }
-    
-    // Update UI
+
     const btn = document.getElementById('mark-complete');
     if (btn) {
         btn.innerText = 'Concluído ✓';
         btn.style.opacity = '0.5';
     }
-    
-    // Refresh sidebar to show checkmark
+
     const course = findCourse(courseId);
-    renderSidebar(course);
+    if (course) renderSidebar(course);
 }
 
 function isEpisodeCompleted(epId) {
     const completed = JSON.parse(localStorage.getItem('sage_progress') || '[]');
-    return completed.includes(epId);
+    return completed.includes(String(epId));
 }
 
 function checkIfCourseCompleted(courseId) {
     const course = findCourse(courseId);
-    if (!course) return false;
-    
+    if (!course?.modules) return false;
+
     const epIds = [];
-    course.modules.forEach(m => m.episodes.forEach(e => epIds.push(e.id)));
-    
+    course.modules.forEach(m => (m.episodes || []).forEach(e => epIds.push(String(e.id))));
+    if (!epIds.length) return false;
+
     const completed = JSON.parse(localStorage.getItem('sage_progress') || '[]');
     return epIds.every(id => completed.includes(id));
 }
