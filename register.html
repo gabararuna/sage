@@ -14,10 +14,9 @@
 
 <body class="min-h-screen flex items-center justify-center relative overflow-hidden">
 
-    <!-- Blobs de fundo -->
-    <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute bottom-[-8%] right-[-8%] w-[480px] h-[480px] bg-[#00BFA5]/6 rounded-full blur-[120px]"></div>
-        <div class="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#003d33]/40 rounded-full blur-[100px]"></div>
+    <!-- Mouse glow -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div id="mouse-glow" style="position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,191,165,0.08) 0%,transparent 70%);transform:translate(-9999px,-9999px);will-change:transform;pointer-events:none;"></div>
     </div>
 
     <main class="w-full max-w-[420px] mx-4 z-10">
@@ -100,8 +99,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" id="register-btn"
-                        class="w-full mt-1 py-2.5 bg-[#00BFA5] hover:bg-[#00d4b8] text-black text-sm font-medium rounded-full transition-all hover:shadow-[0_0_24px_rgba(0,191,165,0.4)] active:scale-[0.98]">
+                    <button type="submit" id="register-btn" class="auth-btn">
                         Criar Conta
                     </button>
                 </form>
@@ -115,6 +113,22 @@
     </main>
 
     <script>
+        // Mouse glow
+        ;(function () {
+            var glow = document.getElementById('mouse-glow');
+            var first = true;
+            document.addEventListener('mousemove', function (e) {
+                if (first) {
+                    first = false;
+                    glow.style.transition = 'none';
+                    glow.style.transform = 'translate(' + (e.clientX - 350) + 'px,' + (e.clientY - 350) + 'px)';
+                    requestAnimationFrame(function () { glow.style.transition = 'transform 0.2s ease'; });
+                } else {
+                    glow.style.transform = 'translate(' + (e.clientX - 350) + 'px,' + (e.clientY - 350) + 'px)';
+                }
+            });
+        })();
+
         const API_URL = '/api';
 
         // Verifica se é admin logado
