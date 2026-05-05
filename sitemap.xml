@@ -2,19 +2,19 @@
 <!-- Atualize o domínio base antes de publicar o sitemap -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://sage.numera.com.br/</loc>
+    <loc>https://sage.gruponumera.com/</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sage.numera.com.br/login.html</loc>
+    <loc>https://sage.gruponumera.com/login.html</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sage.numera.com.br/register.html</loc>
+    <loc>https://sage.gruponumera.com/register.html</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
