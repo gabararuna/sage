@@ -1,49 +1,65 @@
-# 💎 Sage LMS Platform - Modern Learning Experience
+# Sage
 
-Uma plataforma de gerenciamento de cursos (LMS) focada em UX minimalista, alta performance e experiência mobile impecável.
+Plataforma de cursos escalável com trilhas estruturadas em Ciência de Dados, Python, SQL, UI e UX — com player de vídeo customizado, autenticação JWT e banco de dados relacional.
 
-## ✨ Principais Funcionalidades
+**Demo:** [sage.numera.com.br](https://sage.numera.com.br)
 
-### 🎞️ Player de Vídeo Avançado
-- **Controles Personalizados**: Play/Pause, Salto de 10s (Avançar/Retroceder) e Seek rápido.
-- **Legendas (CC)**: Botão dedicado para ativar/desativar legendas via API do YouTube.
-- **Feedback Visual**: Interface White-Label que oculta elementos nativos do YouTube para manter o foco na marca.
-- **Erro Customizado**: Tratamento visual para vídeos indisponíveis ou privados.
+## Trilhas disponíveis
 
-### 📱 Navegação Mobile-First
-- **Drawer Moderno**: Menu lateral que desliza suavemente com efeito de desfoque (*Glassmorphism*).
-- **Backdrop Inteligente**: Fundo escuro que bloqueia interações externas e permite fechar o menu com um toque.
-- **Trava de Rolagem**: Estabilidade total na navegação mobile ao abrir menus.
+- Ciência de Dados
+- Python
+- SQL
+- UI (Interface de Usuário)
+- UX (Experiência do Usuário)
 
-### 🍱 Arquitetura Escalável
-- **JSON Driven**: Todo o catálogo de cursos e módulos é gerenciado através de um único arquivo `data.json`.
-- **Vanilla Tech**: Desenvolvido 100% com HTML, CSS e JS puros, garantindo carregamento instantâneo e facilidade de manutenção.
+## Funcionalidades
 
-## 🚀 Tecnologias Utilizadas
+- Catálogo de cursos configurável via `data.json` — sem necessidade de alterar código
+- Player de vídeo com controles customizados: play/pause, salto de 10s, seek e velocidade
+- Controle de legendas via YouTube IFrame API
+- Autenticação com JWT e hash de senhas com bcrypt
+- Cadastro com confirmação por e-mail
+- Drawer lateral com glassmorphism para navegação mobile
+- Design responsivo e mobile-first
 
-- **HTML5**: Estrutura semântica e SEO-friendly.
-- **CSS3 Moderno**: Variáveis (Custom Properties), Flexbox, Grid e Transições fluídas.
-- **JavaScript (ES6+)**: Manipulação de DOM reativa e integração com APIs externas.
-- **YouTube IFrame Player API**: Controle programático do player de vídeo.
+## Stack
 
-## 🛠️ Como Iniciar
+- **Frontend:** HTML5 + CSS3 + JavaScript puro
+- **Backend:** Node.js (compatível com Cloudflare Workers/Pages)
+- **Banco de dados:** Neon PostgreSQL
+- **Auth:** JWT + bcrypt
+- **Vídeo:** YouTube IFrame Player API
 
-A plataforma é estática e não requer compilação. Para rodar localmente:
+## Estrutura de páginas
 
-1. Clone o repositório ou baixe os arquivos.
-2. Servir a pasta raiz via servidor local (ex: Live Server do VS Code ou `python -m http.server`).
-3. Abra `index.html` no navegador.
+| Página | Descrição | Acesso |
+|--------|-----------|--------|
+| `index.html` | Dashboard e catálogo de cursos | Autenticado |
+| `player.html` | Player de vídeo | Autenticado |
+| `login.html` | Autenticação | Público |
+| `register.html` | Cadastro | Público |
+| `confirm.html` | Confirmação de e-mail | Público |
 
-## 📂 Estrutura de Pastas
+## Como rodar
 
-- `/`: Arquivos raiz (`index.html`, `player.html`).
-- `style.css`: Design System completo e responsividade.
-- `app.js`: Lógica de navegação, player e manipulação de dados.
-- `data.json`: Banco de dados de cursos, módulos e aulas.
+```bash
+git clone https://github.com/seu-usuario/sage.git
+cd sage
 
-## 📝 Licença
+# Instale dependências do backend
+npm install
 
-Este projeto é disponibilizado sob a licença MIT. Sinta-se à vontade para expandir e personalizar!
+# Configure as variáveis de ambiente
+# DATABASE_URL, JWT_SECRET e credenciais SMTP
 
----
-Desenvolvido com foco em excelência técnica e visual. 💎🏆
+# Sirva o frontend
+npx serve .
+```
+
+## SEO
+
+Inclui `sitemap.xml`. Submeta no [Google Search Console](https://search.google.com/search-console) após publicar. Atualize o domínio no arquivo antes do deploy.
+
+## Licença
+
+MIT
